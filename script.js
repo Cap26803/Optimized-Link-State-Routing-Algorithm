@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function visualizeNetwork(numNodes, sourceNode) {
-        const nodes = d3.range(numNodes).map(id => ({ id }));
-        const links = generateLinks(numNodes);
+        const nodes = d3.range(1, numNodes + 1).map(id => ({ id }));
+        const links = generateLinks(nodes);
 
         const width = 800;
         const height = 400;
@@ -25,18 +25,28 @@ document.addEventListener("DOMContentLoaded", function () {
         const link = svg.selectAll(".link")
             .data(links)
             .enter().append("line")
-            .attr("class", "link");
+            .attr("class", "link")
+            .style("stroke", "#999")
+            .style("stroke-width", 2);
 
         const node = svg.selectAll(".node")
             .data(nodes)
             .enter().append("circle")
             .attr("class", "node")
-            .attr("r", 10)
+            .attr("r", 15)
             .attr("fill", d => (d.id === sourceNode) ? "red" : "steelblue")
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
+
+        const nodeText = svg.selectAll(".nodeText")
+            .data(nodes)
+            .enter().append("text")
+            .attr("class", "nodeText")
+            .text(d => d.id)
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.35em");
 
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id))
@@ -51,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             node.attr("cx", d => d.x)
                 .attr("cy", d => d.y);
+
+            nodeText.attr("x", d => d.x)
+                .attr("y", d => d.y);
         });
 
         function dragstarted(event, d) {
@@ -70,10 +83,10 @@ document.addEventListener("DOMContentLoaded", function () {
             d.fy = null;
         }
 
-        function generateLinks(numNodes) {
+        function generateLinks(nodes) {
             const links = [];
-            for (let i = 1; i < numNodes; i++) {
-                links.push({ source: 0, target: i });
+            for (let i = 1; i < nodes.length; i++) {
+                links.push({ source: nodes[0], target: nodes[i] });
             }
             return links;
         }
