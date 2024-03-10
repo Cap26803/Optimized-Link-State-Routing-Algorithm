@@ -22,6 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
             .attr("width", width)
             .attr("height", height);
 
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100).strength(1))
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
         const link = svg.selectAll(".link")
             .data(links)
             .enter().append("line")
@@ -47,11 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .text(d => d.id)
             .attr("text-anchor", "middle")
             .attr("dy", "0.35em");
-
-        const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id))
-            .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2, height / 2));
 
         simulation.on("tick", () => {
             link.attr("x1", d => d.source.x)
