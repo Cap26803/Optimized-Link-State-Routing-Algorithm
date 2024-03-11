@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .data(links)
             .enter().append("line")
             .attr("class", "link")
-            .style("stroke", "#999")
+            .style("stroke", "#998")
             .style("stroke-width", 2);
 
         const node = svg.selectAll(".node")
